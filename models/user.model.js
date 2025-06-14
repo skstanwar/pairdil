@@ -69,6 +69,10 @@ const userSchema = new mongoose.Schema({
   isOnline: {
     type: Boolean,
     default: false
+  },
+  isverify:{
+    type:Boolean,
+    default:false
   }
 
 }, {

@@ -1,4 +1,7 @@
 import { sendOtpToPhone, verifyOtp } from "../validations/auth.validation.js"
+import User from '../models/user.model.js'
+
+
 
 export const sendotptophone = async (req, res) => {
   try {
@@ -6,7 +9,7 @@ export const sendotptophone = async (req, res) => {
     if (!phone) {
       return res.status(400).json({ message: 'Phone number is required' });
     }
-    const result = await sendOtpToPhone(phone,process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN,process.env.TWILIO_VERIFY_SERVICE_SID);
+    const result = await sendOtpToPhone(phone, process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_VERIFY_SERVICE_SID);
 
     if (result.success) {
       return res.status(200).json({ message: 'OTP sent successfully', sid: result.sid });
@@ -26,9 +29,17 @@ export const verifyotp = async (req, res) => {
       return res.status(400).json({ message: 'Phone number and OTP code are required' });
     }
 
-    const result = await verifyOtp(phone, code,process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN,process.env.TWILIO_VERIFY_SERVICE_SID);
+    const result = await verifyOtp(phone, code, process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_VERIFY_SERVICE_SID);
 
     if (result.success) {
+      const updates = {}
+      updates.isVerify = true
+      updates.phone = phone
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user.userId,
+        updates,
+        { new: true }
+      );
       return res.status(200).json({ message: 'OTP verified successfully' });
     } else {
       return res.status(400).json({ message: 'Invalid OTP', error: result.error });
