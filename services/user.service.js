@@ -1,0 +1,1 @@
+// to share the user personal informations related to body data

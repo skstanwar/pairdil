@@ -3,6 +3,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import {connectDB} from "./config/db.js"
 import {userRoutes} from "./routes/user.routes.js"
+import {auth} from "./routes/auth.routes.js"
 dotenv.config();
 connectDB();
 
@@ -14,5 +15,6 @@ app.get("/test" , (req, res)=>{
     res.send("server is running up")
 })
 
+app.use('/api/auth', auth);
 app.use('/api/user', userRoutes);
 export default app;

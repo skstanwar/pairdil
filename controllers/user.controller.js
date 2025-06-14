@@ -23,7 +23,7 @@ export const register = async (req, res) => {
       gender
     });
 
-    const token = generateToken({ userId: user._id });
+    const token = generateToken({ userId: newUser._id });
 
     res.status(201).json({ user: newUser, token });
   } catch (error) {
