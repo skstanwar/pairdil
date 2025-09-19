@@ -1,18 +1,16 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import express from "express";
+import dotenv from "dotenv";
 dotenv.config();
-import {connectDB} from "./config/db.js"
-import {userRoutes} from "./routes/user.routes.js"
-import {auth} from "./routes/auth.routes.js"
-import {pair} from "./routes/pair.routes.js"
+import { connectDB } from "./config/db.js";
+import { userRoutes } from "./routes/user.routes.js";
+import { auth } from "./routes/auth.routes.js";
+import { pair } from "./routes/pair.routes.js";
 connectDB();
-import {sql} from "./config/superbase.js"
 const app = express();
-const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
   next();
 });
 
@@ -26,11 +24,11 @@ app.use((req, res, next) => {
 //     await sql.end(); // Always close the connection
 //   }
 // })();
-app.get("/test" , (req, res)=>{
-    res.send("server is running up")
-})
+app.get("/test", (req, res) => {
+  res.send("server is running up");
+});
 
-app.use('/api/auth', auth);
-app.use('/api/user', userRoutes);
-app.use('/api/pair', pair);
+app.use("/api/auth", auth);
+app.use("/api/user", userRoutes);
+app.use("/api/pair", pair);
 export default app;
