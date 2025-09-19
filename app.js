@@ -1,5 +1,4 @@
 import express from 'express';
-import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
 import {connectDB} from "./config/db.js"
@@ -9,7 +8,7 @@ import {pair} from "./routes/pair.routes.js"
 connectDB();
 import {sql} from "./config/superbase.js"
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
