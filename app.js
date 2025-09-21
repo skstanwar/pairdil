@@ -7,6 +7,7 @@ import { connectDB } from "./config/db.js";
 import { userRoutes } from "./routes/user.routes.js";
 import { auth } from "./routes/auth.routes.js";
 import { pair } from "./routes/pair.routes.js";
+import { getGitLogs } from "./utils/gitlogs.js";
 connectDB();
 const app = express();
 app.use(express.json());
@@ -26,6 +27,16 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 
 app.get("/", (req, res) => {
   res.sendFile("index.html", { root: path.join(__dirname, "public") });
+});
+
+app.get("/logs", async (req, res) => {
+  try {
+    const logs = await getGitLogs();
+    res.json(logs); // Respond in JSON format only
+  } catch (err) {
+    console.error("Error fetching git logs:", err);
+    res.status(500).json({ error: "Failed to fetch git logs" });
+  }
 });
 
 app.use("/api/auth", auth);
