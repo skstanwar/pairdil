@@ -1,6 +1,6 @@
 import { sql } from "../config/superbase.js";
 import { generateBase64String } from "../utils/base64.util.js";
-
+import User from "../models/user.model.js";
 export const paircodegenerator = async (req, res) => {
   try {
     const base64String = generateBase64String(); // Generate unique public ID
@@ -8,10 +8,12 @@ export const paircodegenerator = async (req, res) => {
 
     // Insert into publicidtable
     // Delete existing row for this userID (if any)
-    await sql`
+    console.log("temp");
+    temp = await sql`
       DELETE FROM publicidtable
       WHERE "userID" = ${userId}
     `;
+    console.log(temp);
 
     // Insert new row
     await sql`
@@ -32,6 +34,52 @@ export const paircodegenerator = async (req, res) => {
   }
 };
 
-export const paircodeverify =(req, res)=>{
-    res.send("this is under maintanance")
-}
+export const paircodeverify = async (req, res) => {
+  try {
+    const { code } = req.body;
+    const userId = req.user?.userId; // Assuming JWT middleware adds this
+
+    if (!code) {
+      return res.status(400).json({ message: "❌ Code is required" });
+    }
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized: No user ID" });
+    }
+
+    // Step 1: Get partnerId from SQL
+    const result = await sql`
+      SELECT "userID" 
+      FROM publicidtable 
+      WHERE "publicID" = ${code}
+      LIMIT 1;
+    `;
+
+    if (!result || result.length === 0) {
+      return res.status(404).json({ message: "Invalid or expired publicID" });
+    }
+
+    const partnerId = result[0].userID;
+
+    if (partnerId === userId) {
+      return res.status(400).json({ message: "You cannot pair with yourself" });
+    }
+
+    // Step 2: Update both users in MongoDB
+    await Promise.all([
+      User.findByIdAndUpdate(userId, { partnerId }, { new: true }),
+      User.findByIdAndUpdate(partnerId, { partnerId: userId }, { new: true }),
+    ]);
+
+    console.log(`🔗 Users paired: ${userId} <-> ${partnerId}`);
+
+    return res.status(200).json({
+      message: "✅ Pairing successful",
+      partnerId,
+    });
+  } catch (error) {
+    console.error("❌ Error verifying paircode:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error while verifying paircode" });
+  }
+};
