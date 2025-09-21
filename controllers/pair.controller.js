@@ -8,12 +8,10 @@ export const paircodegenerator = async (req, res) => {
 
     // Insert into publicidtable
     // Delete existing row for this userID (if any)
-    console.log("temp");
-    temp = await sql`
+    await sql`
       DELETE FROM publicidtable
       WHERE "userID" = ${userId}
     `;
-    console.log(temp);
 
     // Insert new row
     await sql`
