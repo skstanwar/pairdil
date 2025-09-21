@@ -13,19 +13,9 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Headers", "*");
   next();
 });
-
-// (async () => {
-//   try {
-//     const result = await sql`SELECT * from publicidtable`;
-//     console.log('✅ PostgreSQL connected. Server time:', result);
-//   } catch (err) {
-//     console.error('❌ Connection failed:', err.message);
-//   } finally {
-//     await sql.end(); // Always close the connection
-//   }
-// })();
-app.get("/test", (req, res) => {
-  res.send("server is running up");
+app.set("view engine", "ejs");
+app.get("/", (req, res) => {
+  res.sendFile("index.html", { root: "public" });
 });
 
 app.use("/api/auth", auth);
