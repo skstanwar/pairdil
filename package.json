@@ -20,6 +20,7 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
     "mongoose": "^8.15.2",
+    "node": "^24.8.0",
     "nodemon": "^3.1.10",
     "postgres": "^3.4.7",
     "socket.io": "^4.8.1",
