@@ -43,7 +43,13 @@ export const paircodeverify = async (req, res) => {
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized: No user ID" });
     }
-
+      // Check if the user is already paired
+    const user = await User.findById(userId);
+    if (user.partnerId){
+    // set null to partnerId and set null to partnerId of partner
+      await User.findByIdAndUpdate(userId, { partnerId: null }, { new: true });
+      await User.findByIdAndUpdate(user.partnerId, { partnerId: null }, { new: true });
+    }
     // Step 1: Get partnerId from SQL
     const result = await sql`
       SELECT "userID" 

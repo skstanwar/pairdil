@@ -5,25 +5,15 @@ import { registerchatSocket } from "./chatSocket.js";
 
 export const initSocket = (io) => {
   io.on("connection", (socket) => {
-    console.log("A user connected: ", socket.id);
+    console.log(`🟢 New client connected: ${socket.id}`);
 
-    socket.on("join", (room) => {
-      socket.join(room);
-      console.log(`${socket.id} joined room ${room}`);
-      socket.to(room).emit("user-joined", socket.id);
-    });
-
-    socket.on("signal", (data) => {
-      // data: { room, signalData, to }
-      // Relay signaling data to target peer
-      io.to(data.to).emit("signal", {
-        from: socket.id,
-        signalData: data.signalData,
-      });
-    });
+    // Register all socket modules here
+    registerLocationSocket(io, socket);
+    registerFeelingSocket(io, socket);
+    registerchatSocket(io, socket);
 
     socket.on("disconnect", () => {
-      console.log("User disconnected: ", socket.id);
+      console.log(`🔴 Client disconnected: ${socket.id}`);
     });
   });
 };
