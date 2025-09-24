@@ -88,15 +88,23 @@ export const paircodeverify = async (req, res) => {
   }
 };
 
-export const unpair = async (req, res) =>{
-  try
-    // complete the unpair function
+export const unpair = async (req, res) => {
+  try {
     const userId = req.user?.userId;
     const user = await User.findById(userId);
-    if (!user.partnerId){
+
+    if (!user || !user.partnerId) {
       return res.status(400).json({ message: "You are not paired with anyone" });
     }
+
+    // Unpair both users
     await User.findByIdAndUpdate(userId, { partnerId: null }, { new: true });
     await User.findByIdAndUpdate(user.partnerId, { partnerId: null }, { new: true });
-  
-}
+
+    return res.status(200).json({ message: "Unpaired successfully" });
+
+  } catch (error) {
+    console.error("❌ Error unpairing:", error);
+    return res.status(500).json({ message: "Server error while unpairing" });
+  }
+};
