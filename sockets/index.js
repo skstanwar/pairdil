@@ -26,8 +26,4 @@ export const initSocket = (io) => {
       console.log("User disconnected: ", socket.id);
     });
   });
-
-  server.listen(3000, () => {
-    console.log("Signaling server running on port 3000");
-  });
 };
