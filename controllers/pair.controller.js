@@ -87,3 +87,16 @@ export const paircodeverify = async (req, res) => {
       .json({ message: "Server error while verifying paircode" });
   }
 };
+
+export const unpair = async (req, res) =>{
+  try
+    // complete the unpair function
+    const userId = req.user?.userId;
+    const user = await User.findById(userId);
+    if (!user.partnerId){
+      return res.status(400).json({ message: "You are not paired with anyone" });
+    }
+    await User.findByIdAndUpdate(userId, { partnerId: null }, { new: true });
+    await User.findByIdAndUpdate(user.partnerId, { partnerId: null }, { new: true });
+  
+}
