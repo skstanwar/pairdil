@@ -1,6 +1,10 @@
 import { sql } from "../config/superbase.js";
 import { generateBase64String } from "../utils/base64.util.js";
 import User from "../models/user.model.js";
+import {io} from "../server.js"
+import SocketIdUUIDpairDB  from '../utils/sqllit3.js';  
+const dbInstance = SocketIdUUIDpairDB.getInstance();
+
 export const paircodegenerator = async (req, res) => {
   try {
     const base64String = generateBase64String(); // Generate unique public ID
@@ -73,7 +77,13 @@ export const paircodeverify = async (req, res) => {
       User.findByIdAndUpdate(userId, { partnerId }, { new: true }),
       User.findByIdAndUpdate(partnerId, { partnerId: userId }, { new: true }),
     ]);
-
+    // Step 3: Emit socket event to partner
+    await dbInstance.get(partnerId, (err, socketId) => {
+              // Step 3: Emit socket event to partner
+              io.of("/master_gateway").to(socketId).emit("pairing_successful", { partnerId: userId })
+            }
+                      );
+    // Step 4: Emit socket event to user  
     console.log(`🔗 Users paired: ${userId} <-> ${partnerId}`);
 
     return res.status(200).json({

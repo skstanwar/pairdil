@@ -1,9 +1,9 @@
 // sockets/feelingSocket.js
-export const registerFeelingSocket = (io, socket) => {
-  socket.on('send_feeling', ({ userId, feeling }) => {
-    console.log(`💗 Feeling update from ${userId}: ${feeling}`);
+export const registerFeelingSocket = (__io, socket) => {
+  socket.on("send_feeling", (temp) => {
+    console.log(`💗 Feeling update from`);
 
     // Broadcast to the partner
-    socket.broadcast.emit('receive_feeling', { userId, feeling });
+    __io.emit("receive_feeling", temp);
   });
 };

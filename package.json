@@ -24,6 +24,7 @@
     "nodemon": "^3.1.10",
     "postgres": "^3.4.7",
     "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
     "twilio": "^5.7.1"
   }
 }
