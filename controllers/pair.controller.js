@@ -78,8 +78,9 @@ export const paircodeverify = async (req, res) => {
       User.findByIdAndUpdate(partnerId, { partnerId: userId }, { new: true }),
     ]);
     // Step 3: Emit socket event to partner
-    await dbInstance.get(partnerId, (err, socketId) => {
+    await dbInstance.get(partnerId, async (err, socketId) => {
               // Step 3: Emit socket event to partner
+              console.log("Triggered:", socketId)
               io.of("/master_gateway").to(socketId).emit("pairing_successful", { partnerId: userId })
             }
                       );
@@ -110,6 +111,13 @@ export const unpair = async (req, res) => {
     // Unpair both users
     await User.findByIdAndUpdate(userId, { partnerId: null }, { new: true });
     await User.findByIdAndUpdate(user.partnerId, { partnerId: null }, { new: true });
+
+    await dbInstance.get(partnerId, async (err, socketId) => {
+              // Step 3: Emit socket event to partner
+              console.log("Triggered:", socketId)
+              io.of("/master_gateway").to(socketId).emit("unparing_successful", { partnerId: userId })
+            }
+      );
 
     return res.status(200).json({ message: "Unpaired successfully" });
 

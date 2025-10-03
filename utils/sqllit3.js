@@ -7,7 +7,7 @@ export default class SocketIdUUIDpairDB {
                 return SocketIdUUIDpairDB.instance;
             }
 
-            this.db = new sqlite3.Database('./SocketIdUUIDpair.db');
+            this.db = new sqlite3.Database('./storage/SocketIdUUIDpair.db');
 
             // Wrap table creation in a Promise
             this.ready = new Promise((resolve, reject) => {
@@ -49,7 +49,7 @@ export default class SocketIdUUIDpairDB {
             });
         }
 
-    update(UUID, socketId, callback) {
+    async update(UUID, socketId, callback) {
         const sql = `UPDATE SocketIdUUIDpair SET socketId = ? WHERE UUID = ?`;
         this.db.run(sql, [socketId, UUID], function(err) {
             if (err) {
@@ -60,7 +60,7 @@ export default class SocketIdUUIDpairDB {
         });
     }
 
-    delete(UUID, callback) {
+   async delete(UUID, callback) {
         const sql = `DELETE FROM SocketIdUUIDpair WHERE UUID = ?`;
         this.db.run(sql, [UUID], function(err) {
             if (err) {
@@ -71,13 +71,14 @@ export default class SocketIdUUIDpairDB {
         });
     }
 
-    get(UUID, callback) {
+    async get(UUID, callback) {
         const sql = `SELECT socketId FROM SocketIdUUIDpair WHERE UUID = ?`;
         this.db.get(sql, [UUID], (err, row) => {
             if (err) {
                 console.error(err.message);
                 return callback(err);
             }
+            console.log(row.socketId)
             callback(null, row ? row.socketId : null);
         });
     }
