@@ -7,7 +7,7 @@ export default class SocketIdUUIDpairDB {
                 return SocketIdUUIDpairDB.instance;
             }
 
-            this.db = new sqlite3.Database('./storage/SocketIdUUIDpair.db');
+            this.db = new sqlite3.Database('storage/SocketIdUUIDpair.db');
 
             // Wrap table creation in a Promise
             this.ready = new Promise((resolve, reject) => {
